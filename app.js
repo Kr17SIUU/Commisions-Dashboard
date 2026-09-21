@@ -1,3 +1,4 @@
+require('dotenv').config();
 require('./app_api/models/db');
 
 const createError = require('http-errors');
