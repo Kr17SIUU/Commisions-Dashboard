@@ -1,0 +1,10 @@
+extends layout
+
+block head
+  link(rel='stylesheet', href='/principal-react/principal.css')
+
+block content
+  #principal-react-root(data-userid=userid data-nombre=userNombre)
+
+block scripts
+  script(type='module', src='/principal-react/principal.js')

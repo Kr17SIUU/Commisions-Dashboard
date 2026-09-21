@@ -1,0 +1,33 @@
+#!/usr/bin/env node
+
+const app = require('../app');
+const http = require('http');
+
+const port = normalizePort(process.env.PORT || '3000');
+app.set('port', port);
+
+const server = http.createServer(app);
+server.listen(port);
+server.on('error', onError);
+server.on('listening', () => {
+  console.log(`Commission Board disponible en http://localhost:${port}`);
+});
+
+function normalizePort(value) {
+  const parsed = parseInt(value, 10);
+  if (Number.isNaN(parsed)) return value;
+  return parsed >= 0 ? parsed : false;
+}
+
+function onError(error) {
+  if (error.syscall !== 'listen') throw error;
+  if (error.code === 'EACCES') {
+    console.error(`El puerto ${port} requiere permisos elevados.`);
+    process.exit(1);
+  }
+  if (error.code === 'EADDRINUSE') {
+    console.error(`El puerto ${port} ya está en uso.`);
+    process.exit(1);
+  }
+  throw error;
+}

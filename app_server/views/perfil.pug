@@ -1,0 +1,186 @@
+extends layout
+
+block content
+  .cb-page
+    header.cb-topbar
+      a.cb-brand(href=`/principal?nombre=${encodeURIComponent(usuario.nombre)}&userid=${encodeURIComponent(userid)}`)
+        span.cb-brand-mark C
+        span Commission Board
+      a.cb-button.cb-button-light(href=`/principal?nombre=${encodeURIComponent(usuario.nombre)}&userid=${encodeURIComponent(userid)}`)
+        i.bi.bi-arrow-left
+        | Volver al panel
+
+    main.cb-wrap
+      if success
+        .cb-notice.cb-notice-success= success
+      if error
+        .cb-notice.cb-notice-error= error
+
+      section.cb-profile-heading
+        .cb-profile-user
+          .cb-avatar
+            if usuario.fotoPerfil
+              img(src=usuario.fotoPerfil, alt='Foto de perfil')
+            else
+              i.bi.bi-person-fill
+          div
+            span.cb-kicker Perfil personal
+            h1= usuario.nombre
+            p.cb-muted= usuario.email
+
+      .cb-profile-grid
+        section.cb-card
+          span.cb-kicker Cuenta
+          h2 Editar perfil
+
+          form(action='/perfil', method='post', enctype='multipart/form-data')
+            input(type='hidden', name='userid', value=userid)
+
+            label.cb-label(for='nombre') Nombre
+            input#nombre.cb-input(
+              type='text',
+              name='nombre',
+              value=usuario.nombre,
+              required
+            )
+
+            label.cb-label(for='email') Correo electrónico
+            input#email.cb-input(
+              type='email',
+              name='email',
+              value=usuario.email,
+              required
+            )
+
+            label.cb-label(for='fotoPerfil') Foto de perfil
+            input#fotoPerfil.cb-file(
+              type='file',
+              name='fotoPerfil',
+              accept='image/jpeg,image/png,image/webp,image/gif'
+            )
+
+            if usuario.fotoPerfil
+              label.cb-check
+                input(
+                  type='checkbox',
+                  name='eliminarFoto',
+                  value='true'
+                )
+                span Quitar foto actual
+
+            button.cb-button.cb-button-full(type='submit')
+              i.bi.bi-floppy
+              | Guardar cambios
+
+        section.cb-card.cb-history
+          .cb-section-title
+            div
+              span.cb-kicker Moodboard
+              h2 Mis comisiones
+            span.cb-count #{comisiones.length} total
+
+          if comisiones.length
+            .profile-commission-grid
+              each comision, cardIndex in comisiones
+                article.profile-commission-card
+                  .profile-media(data-carousel)
+
+                    if comision.imagenes && comision.imagenes.length
+                      each imagen, imageIndex in comision.imagenes
+                        img.profile-slide(
+                          src=imagen,
+                          alt=`Referencia ${imageIndex + 1}`,
+                          class=imageIndex === 0 ? 'is-active' : ''
+                        )
+
+                      if comision.imagenes.length > 1
+                        button.profile-arrow.profile-arrow-left(
+                          type='button',
+                          data-prev,
+                          aria-label='Imagen anterior'
+                        )
+                          i.bi.bi-chevron-left
+
+                        button.profile-arrow.profile-arrow-right(
+                          type='button',
+                          data-next,
+                          aria-label='Imagen siguiente'
+                        )
+                          i.bi.bi-chevron-right
+
+                        .profile-counter(data-counter)
+                          | 1/#{comision.imagenes.length}
+
+                    else
+                      .profile-placeholder
+                        i.bi.bi-images
+                        span Sin imágenes
+
+                    // Estado visible de la comisión
+                    - const estadoTexto = comision.estado === 'demorado' ? 'En proceso' : comision.estado.charAt(0).toUpperCase() + comision.estado.slice(1)
+                    span.profile-status(
+                      class=`status-${comision.estado}`
+                    )= estadoTexto
+
+                  .profile-card-body
+                    p= comision.descripcion
+
+                    a.cb-button.cb-button-light.cb-button-full(
+                      href=`/principal?nombre=${encodeURIComponent(usuario.nombre)}&userid=${encodeURIComponent(userid)}`
+                    )
+                      i.bi.bi-pencil-square
+                      | Editar en panel
+
+          else
+            .cb-empty-profile
+              i.bi.bi-journal-plus
+              h3 Aún no tienes comisiones
+              p.cb-muted Crea la primera desde tu panel principal.
+
+              a.cb-button(
+                href=`/principal?nombre=${encodeURIComponent(usuario.nombre)}&userid=${encodeURIComponent(userid)}`
+              )
+                | Crear comisión
+
+
+block scripts
+  script.
+    document.querySelectorAll('[data-carousel]').forEach((carousel) => {
+      const slides = Array.from(
+        carousel.querySelectorAll('.profile-slide')
+      );
+
+      if (slides.length < 2) return;
+
+      const counter = carousel.querySelector('[data-counter]');
+      let index = 0;
+
+      const render = () => {
+        slides.forEach((slide, i) => {
+          slide.classList.toggle('is-active', i === index);
+        });
+
+        if (counter) {
+          counter.textContent = `${index + 1}/${slides.length}`;
+        }
+      };
+
+      carousel
+        .querySelector('[data-prev]')
+        ?.addEventListener('click', () => {
+          index = index === 0
+            ? slides.length - 1
+            : index - 1;
+
+          render();
+        });
+
+      carousel
+        .querySelector('[data-next]')
+        ?.addEventListener('click', () => {
+          index = index === slides.length - 1
+            ? 0
+            : index + 1;
+
+          render();
+        });

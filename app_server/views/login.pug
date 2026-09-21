@@ -1,0 +1,24 @@
+extends layout
+
+block content
+  .cb-page
+    header.cb-topbar
+      a.cb-brand(href='/')
+        span.cb-brand-mark C
+        span Commission Board
+    main.cb-auth
+      section.cb-card.cb-auth-card
+        span.cb-kicker Acceso personal
+        h1 Commission Board
+        p.cb-muted Organiza referencias, estados y detalles de todas tus comisiones.
+        if error
+          .cb-notice.cb-notice-error= error
+        form(action='/login', method='post')
+          label.cb-label(for='email') Correo electrónico
+          input#email.cb-input(type='email', name='email', placeholder='tu@email.com', required)
+          label.cb-label(for='password') Contraseña
+          input#password.cb-input(type='password', name='password', placeholder='Tu contraseña', required)
+          button.cb-button.cb-button-full(type='submit')
+            i.bi.bi-box-arrow-in-right
+            | Iniciar sesión
+        p.cb-auth-footer ¿No tienes cuenta? #[a.cb-link(href='/registro') Regístrate]
