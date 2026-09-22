@@ -18,7 +18,7 @@ Aplicación web full-stack para organizar una lista personal de comisiones. El p
 
 ## Estados de una comisión
 
-- `Demorado`
+- `En proceso`
 - `Atrasado`
 - `Completado`
 
@@ -75,12 +75,4 @@ npm start
 
 POST/PUT de comisiones usan `multipart/form-data` con `userId`, `descripcion`, `estado` e `imagenes` (máximo 8 archivos, 1 MB cada uno).
 
-## Entregable
 
-El código incluye React, TypeScript, componentes tipados, CRUD Express, MongoDB, variables de entorno y README. Todavía debes completar en tu cuenta:
-
-- Subir el repositorio a GitHub.
-- Proteger la rama `main`.
-- Crear ramas `feature/...` o Pull Requests como evidencia del flujo de trabajo.
-- Configurar MongoDB Atlas.
-- Desplegar en Vercel y agregar la URL pública al README.
